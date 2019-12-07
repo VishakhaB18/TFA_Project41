@@ -77,3 +77,65 @@ def update_or_delete(request, pk):
     # delete
     elif request.method == "DELETE":
         Sighting.objects.get(pk=pk).delete()
+
+
+def stats(request):
+
+    s = Sighting.objects.all()
+
+    lat_lon = np.array(s.values_list('Latitude', 'Longitude'))
+    avg_coords = (np.mean(lat_lon[:,0]), np.mean(lat_lon[:,1]))
+
+    activities = np.array(s.values_list('Running', 'Chasing', 'Climbing', 'Eating', 'Foraging'))
+    act_freq = np.sum(activities,axis=0)
+    most_common_act = ('Running', 'Chasing', 'Climbing', 'Eating', 'Foraging')[np.argmax(act_freq)]
+
+    responses = np.array(s.values_list('Approaches', 'Runs_from', 'Indifferent'))
+    resp_freq = np.sum(responses,axis=0)
+    most_common_resp = ('Approaches', 'Runs_from', 'Indifferent')[np.argmax(resp_freq)]
+
+    sounds = np.array(s.values_list('Kuks', 'Quaas', 'Moans'))
+    sound_freq = np.sum(sounds,axis=0)
+    most_common_sound = ('Kuks', 'Quaas', 'Moans')[np.argmax(sound_freq)]
+
+    color = list(s.values_list('Primary_Fur_Color', flat=True))
+    counter = dict()
+    for c in color:
+        if c != 'nan':
+            if c in counter:
+                counter[c] += 1
+            else:
+                counter[c] = 1
+    max_c = 0
+    most_common_color = None
+    for k,v in counter.items():
+        if v > max_c:
+            max_c = v
+            most_common_color = k
+
+    context = {'avg_coords': avg_coords,
+               'most_common_act': most_common_act,
+               'most_common_resp': most_common_resp,
+               'most_common_sound':most_common_sound,
+               'most_common_color': most_common_color
+    }
+
+    return render(request,'tracking/stats.html',context)
+
+
+class Point:
+
+    def __init__(self, lat, lon):
+        self.latitude = lat
+        self.longitude = lon
+
+
+def map_view(request):
+
+    s = Sighting.objects.values_list('Latitude', 'Longitude')
+
+    sightings = []
+    for sighting in s[:100]:
+        sightings.append(Point(sighting[1], sighting[0]))
+
+    return render(request, 'tracking/map.html', {'sightings': sightings})
