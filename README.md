@@ -17,7 +17,7 @@ Feature Highlights:
  
  Group Members(UNI): (vb2496, isk2117)
  
- App link:
+ App link: https://tools-project-vb2496.appspot.com
  
- Github link:
+ Github link: https://github.com/VishakhaB18/TFA_Project41
   
