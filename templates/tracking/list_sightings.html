@@ -24,7 +24,10 @@
     <tr>
         <td>{{ i }}</td>
         <td><a href="/sightings/{{ i }}">Edit</a></td>
-        <td><a href="/sightings/{{ i }}">Delete</a></td>
+        <td>
+            <form action="/sightings/{{ i }}" method="delete">
+                <input type="submit" value="Delete">
+            </form></td>
     </tr>
     {% endfor %}
     </tbody>
