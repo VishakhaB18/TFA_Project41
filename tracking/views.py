@@ -139,3 +139,30 @@ def map_view(request):
         sightings.append(Point(sighting[1], sighting[0]))
 
     return render(request, 'tracking/map.html', {'sightings': sightings})
+
+class SightingForm(forms.Form):
+
+    Unique_Squirrel_ID = forms.CharField(max_length=20,required=False)
+    Latitude = forms.FloatField(required=False)
+    Longitude = forms.FloatField(required=False)
+    Shift = forms.CharField(max_length=2,required=False)
+    Date = forms.CharField(max_length=10,required=False)
+    Age = forms.CharField(max_length=10, required=False)
+    Primary_Fur_Color = forms.CharField(max_length=10,required=False)
+    Location = forms.CharField(max_length=20,required=False)
+    Specific_Location = forms.CharField(max_length=50,required=False)
+    Other_Activities = forms.CharField(max_length=20,required=False)
+    Running = forms.BooleanField(required=False)
+    Chasing = forms.BooleanField(required=False)
+    Climbing = forms.BooleanField(required=False)
+    Eating = forms.BooleanField(required=False)
+    Foraging = forms.BooleanField(required=False)
+    Kuks = forms.BooleanField(required=False)
+    Quaas = forms.BooleanField(required=False)
+    Moans = forms.BooleanField(required=False)
+    Tail_flags = forms.BooleanField(required=False)
+    Tail_twitches = forms.BooleanField(required=False)
+    Approaches = forms.BooleanField(required=False)
+    Indifferent = forms.BooleanField(required=False)
+    Runs_from = forms.BooleanField(required=False)
+    
