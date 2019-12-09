@@ -2,7 +2,7 @@ from django.shortcuts import render
 from tracking.models import Sighting
 import json
 import numpy as np
-
+from django import forms
 
 def list_sightings(request):
 
@@ -13,42 +13,69 @@ def list_sightings(request):
 
 def add_sighting(request):
 
-    data = json.loads(request.body.decode('utf-8'))
+    if request.method == "POST":
+        form = SightingForm(request.POST)
+        if form.is_valid():
 
-    s = Sighting()
-    s.Latitude = data.get('Latitude')
-    s.Longitude = data.get('Longitude')
-    s.Unique_Squirrel_ID = data.get('Unique Squirrel ID')
-    s.Shift = data.get('Shift')
-    s.Date = data.get('Date')
-    s.Age = data.get('Age')
-    s.Primary_Fur_Color = data.get('Primary Fur Color')
-    s.Location = data.get('Location')
-    s.Specific_Location = data.get('Specific Location')
-    s.Running = data.get('Running')
-    s.Chasing = data.get('Chasing')
-    s.Climbing = data.get('Climbing')
-    s.Eating = data.get('Eating')
-    s.Foraging = data.get('Foraging')
-    s.Other_Activities = data.get('Other Activities')
-    s.Kuks = data.get('Kuks')
-    s.Quaas = data.get('Quaas')
-    s.Moans = data.get('Moans')
-    s.Tail_flags = data.get('Tail flags')
-    s.Tail_twitches = data.get('Tail twitches')
-    s.Approaches = data.get('Approaches')
-    s.Indifferent = data.get('Indifferent')
-    s.Runs_from = data.get('Runs from')
+            data = form.cleaned_data
 
-    s.save()
+            s = Sighting()
+            s.Latitude = data.get('Latitude')
+            s.Longitude = data.get('Longitude')
+            s.Unique_Squirrel_ID = data.get('Unique_Squirrel_ID')
+            s.Shift = data.get('Shift')
+            s.Date = data.get('Date')
+            s.Age = data.get('Age')
+            s.Primary_Fur_Color = data.get('Primary_Fur_Color')
+            s.Location = data.get('Location')
+            s.Specific_Location = data.get('Specific_Location')
+            s.Running = data.get('Running')
+            s.Chasing = data.get('Chasing')
+            s.Climbing = data.get('Climbing')
+            s.Eating = data.get('Eating')
+            s.Foraging = data.get('Foraging')
+            s.Other_Activities = data.get('Other_Activities')
+            s.Kuks = data.get('Kuks')
+            s.Quaas = data.get('Quaas')
+            s.Moans = data.get('Moans')
+            s.Tail_flags = data.get('Tail_flags')
+            s.Tail_twitches = data.get('Tail_twitches')
+            s.Approaches = data.get('Approaches')
+            s.Indifferent = data.get('Indifferent')
+            s.Runs_from = data.get('Runs_from')
+
+            s.save()
+
+    elif request.method == "GET":
+        # fields = ['Unique Squirrel ID','Latitude', 'Longitude', 'Shift', 'Date', 'Age',
+        #           'Primary Fur Color', 'Location', 'Specific Location',  'Other Activities']
+        #
+        # bool_fields = ['Running', 'Chasing', 'Climbing', 'Eating', 'Foraging', 'Kuks',
+        #                'Quaas', 'Moans','Tail flags', 'Tail twitches', 'Indifferent', 'Runs from']
+
+        return render(request, "tracking/add.html", {'form': SightingForm()})
+
+  
 
 
 def update_or_delete(request, pk):
+
+    s = Sighting.objects.get(pk=pk)
+
+    if request.method == "GET":
+        form = SightingForm(s.__dict__)
+
+        if form.is_valid():
+            return render(request, "tracking/add.html", {'form': form})
+        else:
+            return render(request, "tracking/add.html", {'errors': form.errors})
+
     # update
     if request.method == "POST":
+
         data = json.loads(request.body.decode('utf-8'))
         s = Sighting.objects.get(pk=pk)
-
+        
         s.Latitude = data.get('Lattitude') or s.Latitude
         s.Longitude = data.get('Longitude') or s.Longitude
         s.Unique_Squirrel_ID = data.get('Unique Squirrel ID') or s.Unique_Squirrel_ID
@@ -72,11 +99,8 @@ def update_or_delete(request, pk):
         s.Approaches = data.get('Approaches') or s.Approaches
         s.Indifferent = data.get('Indifferent') or s.Indifferent
         s.Runs_from = data.get('Runs from') or s.Runs_from
-
+        
         s.save()
-    # delete
-    elif request.method == "DELETE":
-        Sighting.objects.get(pk=pk).delete()
 
 
 def stats(request):
