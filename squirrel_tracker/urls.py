@@ -5,9 +5,9 @@ from tracking import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('sightings/', include('tracking.urls')),
+    path('sightings', include('tracking.urls')),
     path('stats', views.stats),
     path('add', views.add_sighting),
-    path('map/', map_view),
+    path('map', map_view),
     path('<str:pk>', views.update_or_delete)
 ]
